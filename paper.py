@@ -12,6 +12,9 @@ k3=0.1*k1
 s=2*k3/(k1+(math.pi)**4*mcr**4)
 
 
+y=1.5
+x1=np.array([0.01, 0.01,0.01,0.01,0.01])
+
 
 def KroneckerDelta (j,k):
     d=0
@@ -22,98 +25,108 @@ def KroneckerDelta (j,k):
     return d
 
 
-def Im(m):
-    e=[]
-    N=5
-    for p in range(1,N):
-        for q in range (1,N):
-            for r in range (1,N):
-                 e.append(KroneckerDelta(p+q,r+m)-
-                         KroneckerDelta(abs(p-q),r+m)-
-                         KroneckerDelta(p+q,abs(r-m))+
-                         KroneckerDelta(abs(p-q),abs(r-m))+
-                         KroneckerDelta(p,q)*KroneckerDelta(r,m))
-                 r=sum(e)
-    return(r)
 
 def am(m):
-    return ( ( (m**2*(math.pi)**2+k1/(m**2*(math.pi)**2) ))/ (((math.pi)**2*mcr**2)+k1/((math.pi)**2*mcr**2)) )
+    return (((m**2*(math.pi)**2+(k1/(m**2*(math.pi)**2)) ))/ (((math.pi)**2*mcr**2)+(k1/((math.pi)**2*mcr**2))))
 
 
-x_start = 0
-x_stop = 1
-x1_start = 0
-x1_stop = 1
-L = 5
-x = np.linspace(x_start, x_stop, L+1)
-x1= np.linspace(x1_start, x1_stop, L+1)
-#x1= [0.2,0.2,0.2,0.2,0.2,0.2]
-#x= [0,0.2,0.4,0.6,0.8,1]
-print (x1)
-#print (x2)
-y=[1,1,1,1,1,1]  
-def f(x):
-    return ((x[m+1]+x1[m+1])*(am(m)*x[m]-s*mcr**2*Im(m)/(8*m**2))-(x[m]+x1[m])*(am(m+1)*x[m+1]-s*mcr**2*Im(m+1)/(8*(m+1)**2)))
+def F(x):
+    
+    Im=np.array([3*((y)**3 - x[1]*y**2 + 2*((x[0])**2-x[2]*x[0]+(x[1])**2+(x[2])**2)*y+x[0]*x[1]*(x[0]+2*x[2])),
+             3*((x[0])**3+2*((x[1])**2+(x[2])**2)*x[0]+y**2*(2*x[0]-x[2])+(x[1])**2*x[2]+2*y*x[1]*(x[0]+x[2])),
+             -y**3+6*x[1]*y**2+3*x[0]*(x[0]+2*x[2])*y+3*x[1]*(2*(x[0])**2+2*x[2]*x[0]+(x[1])**2+2*(x[2])**2),
+             3*((x[2])**3+2*(x[0])**2*x[2]+2*(x[1])**2*x[2]+x[0]*(x[1])**2+2*y*x[0]*x[1]-y**2*(x[0]-2*x[2]))])
 
-def df(x):
-
-   return ((((x[m+2]+x1[m+2])*(am(m+1)*x[m+1]-s*mcr**2*Im(m+1)/(8*(m+1)**2))-
-             (x[m+1]+x1[m+1])*(am(m+2)*x[m+2]-s*mcr**2*Im(m+2)/(8*(m+2)**2)) )-
-            ((x[m+1]+x1[m+1])*(am(m)*x[m]-s*mcr**2*Im(m)/(8*m**2))-
-            (x[m]+x1[m])*(am(m+1)*x[m+1]-s*mcr**2*Im(m+1)/(8*(m+1)**2))))/(x[m+1]-x[m]))
-
-
-
-for m in range (1, L-1):
-    while abs(f(x))>1e-6:
-        print ('x',x[m])
-        print ('f',f(x))
-        x[m]=x[m]-f(x)/df(x)
+   
         
-    print ('for m=1...L, x[m]',x[m])
-a=[]
-for m in range (1,L):
-    a.append((am(m)*x[m]-s*mcr**2*Im(m)/(8*m**2))/(x[m]+x1[m]))
+    dd=np.array([ (x[0]+x1[1])*(am(1)*y-s*mcr**2*Im[0]/8)-(y+x1[0])*(am(2)*x[0]-s*mcr**2*Im[1]/(8*2**2)),
+          (x[1]+x1[2])*(am(2)*x[0]-s*mcr**2*Im[1]/(8*2**2))-(x[0]+x1[1])*(am(3)*x[1]-s*mcr**2*Im[2]/(8*3**2)),
+          (x[2]+x1[3])*(am(3)*x[1]-s*mcr**2*Im[2]/(8*3**2))-(x[1]+x1[2])*(am(4)*x[2]-s*mcr**2*Im[3]/(8*4**2))])
+    return dd
 
-#a.append(0)
-#a.append(0)
-x = np.delete(x, 4)
-x = np.delete(x, 4) 
-print (a)
-print (x)
+def J(x):
+    
+    Im=np.array([3*((y)**3 - x[1]*y**2 + 2*((x[0])**2-x[2]*x[0]+(x[1])**2+(x[2])**2)*y+x[0]*x[1]*(x[0]+2*x[2])),
+             3*((x[0])**3+2*((x[1])**2+(x[2])**2)*x[0]+y**2*(2*x[0]-x[2])+(x[1])**2*x[2]+2*y*x[1]*(x[0]+x[2])),
+             -y**3+6*x[1]*y**2+3*x[0]*(x[0]+2*x[2])*y+3*x[1]*(2*(x[0])**2+2*x[2]*x[0]+(x[1])**2+2*(x[2])**2),
+             3*((x[2])**3+2*(x[0])**2*x[2]+2*(x[1])**2*x[2]+x[0]*(x[1])**2+2*y*x[0]*x[1]-y**2*(x[0]-2*x[2]))])
+
+    ddd= np.array(
+                 [[(am(1)*y-s*mcr**2*Im[0]/8)+(x[0]+x1[1])*(-s*mcr**2*(3*(4*x[0]*y-2*x[2]*y+2*x[1]*x[0]+2*x[2]*x[1])/8))-
+                   (y+x1[0])*(am(2)-s*mcr**2*(3*(3*(x[0])**2+2*((x[1])**2+(x[2])**2)+2*y**2+2*y*x[1])/8*2**2)),
+                   
+                   (-s*mcr**2*(3*(-y**2+4*x[1]*y)+x[0]*(x[0]+2*x[2])/8))*(x[0]+x1[1])-
+                   (y+x1[0])*(-s*mcr**2*(3*(4*x[1]*x[0]+2*x[1]*x[2]+2*y*(x[0]+x[2]))/8*2**2)),
+                   
+                   (-s*mcr**2*(3*(-2*x[0]*y+4*x[2]*y+2*x[0]*x[1])/8))*(x[0]+x1[1])-
+                    (y+x1[0])*(-s*mcr**2*(3*(4*x[2]*x[0]-y**2+2*y*x[1]+(x[1])**2)/8*2**2))],
+
+
+                  
+                  [(am(2)-s*mcr**2*(3*(3*(x[0])**2+2*((x[1])**2+(x[2])**2)+2*y**2+2*y*x[1])/(8*2**2)))*(x[1]+x1[2])-
+                   (am(3)*x[1]-s*mcr**2*Im[2]/(8*3**2))-(x[0]+x1[1])*(-s*mcr**2*(6*x[0]*y+6*x[2]*y+12*x[1]*x[0]+6*x[1]*x[2])/(8*3**2)),
+                   
+                   (am(2)*x[0]-s*mcr**2*Im[1]/(8*2**2))+(x[1]+x1[2])*(-s*mcr**2*(3*(4*x[1]*x[0]+2*x[1]*x[2]+2*y*(x[0]+x[2]))/(8*2**2)))-
+                   (x[0]+x1[1])*(am(3)-(s*mcr**2*(6*y**2+6*(x[0])**2+6*x[2]*x[0]+9*(x[1])**2+6*(x[2])**2)/(8*3**2))),
+                   
+                   (-s*mcr**2*((3*(4*x[2]*x[0]-y**2+2*y*x[1]+(x[1])**2))/(8*2**2)))*(x[1]+x1[2])-
+                    (x[0]+x1[1])*(-s*mcr**2*(6*x[0]*y+6*x[1]*x[0]+12*x[1]*x[2])/(8*3**2))],
 
 
 
-U= []
-'''
-def interpolation(aval):
-    w = bisect.bisect_left(t, aval)
-    z = t[w-1]
-    s = t[w]
-    if z==s: return tee[x]
-    delta = float(aval-z)/(s-z)
-    return delta*tee[s] + (1-delta)*tee[z]
+                  
+                  [(-s*mcr**2*(((6*x[0]*y+6*x[2]*y+12*x[1]*x[0]+6*x[1]*x[2]))/(8*3**2)))*(x[2]+x1[3])-
+                   (x[1]+x1[2])*(-s*mcr**2*(3*(4*x[0]*x[2]+(x[1])**2+2*y*x[1]-y**2))/(8*4**2)),
+                   
+                   (am(3)-s*mcr**2*((6*y**2+6*(x[0])**2+6*x[2]*x[0]+9*(x[1])**2+6*(x[2])**2)/(8*3**2)))*(x[2]+x1[3])-
+                   (am(4)*x[2]-s*mcr**2*Im[3]/(8*4**2))-(x[2]+x1[3])*(-s*mcr**2*3*(4*x[1]*x[2]+2*x[0]*x[1]+2*y*x[0])/(8*4**2)),
+                  
+                   (am(3)*x[1]-(s*mcr**2*Im[2]/(8*3**2)))+(x[2]+x1[3])*(-s*mcr**2*(6*x[0]*y+6*x[1]*x[0]+12*x[1]*x[2])/(8*3**2))-
+                   (x[1]+x1[2])*(am(4)-s*mcr**2*((3*(3*(x[2])**2+2*(x[0])**2+2*(x[1])**2+2*y**2))/(8*4**2)))]
+                   ])
+    return ddd
 
-dictionary = dict(zip(x, a))
-t = sorted(dictionary)
-tee = dictionary
-interpolation = np.vectorize(interpolation) 
-vv = np.linspace(0, 1, 500)
+def Newton_method(F, J, x, eps):
+    F_value = F(x)
+    F_norm = np.linalg.norm(F_value,ord=2)
+    iteration_counter = 0
+    while abs(F_norm) > eps and iteration_counter < 100:
+        
+        delta = np.linalg.solve(J(x),-F_value)
+        x = x + delta
+       
+        F_value = F(x)
+        F_norm = np.linalg.norm(F_value,ord=2)
+        iteration_counter += 1
 
-U=np.append(U,interpolation(vv))
-'''
+    if abs(F_norm) > eps:
+        iteration_counter = -1
+    return x, iteration_counter
 
-#print ('U',U)
-#print ('vv',vv)
-#plt.plot(vv,U,'black', label='load')
-plt.plot(x, a)
-#f = interp1d(x, a)
-#xnew = np.linspace(0, 1, num=54)
+
+
+
+p, n = Newton_method(F, J, x=np.array([0.1,0.1,0.1]), eps=0.00000000001)
+print ('p', p)
+
+Imm=np.array([3*((y)**3 - p[1]*y**2 + 2*((p[0])**2-p[2]*p[0]+(p[1])**2+(p[2])**2)*y+p[0]*p[1]*(p[0]+2*p[2])),
+             3*((p[0])**3+2*((p[1])**2+(p[2])**2)*p[0]+y**2*(2*p[0]-p[2])+(p[1])**2*p[2]+2*y*p[1]*(p[0]+p[2])),
+             -y**3+6*p[1]*y**2+3*p[0]*(p[0]+2*p[2])*y+3*p[1]*(2*(p[0])**2+2*p[2]*p[0]+(p[1])**2+2*(p[2])**2),
+             3*((p[2])**3+2*(p[0])**2*p[2]+2*(p[1])**2*p[2]+p[0]*(p[1])**2+2*y*p[0]*p[1]-y**2*(p[0]-2*p[2]))])
+
+alpha=np.array([(am(1)*y-s*mcr**2*Imm[0]/8)/(y+x1[0]),
+                 (am(2)*p[0]-s*mcr**2*Imm[1]/(8*2**2))/(p[0]+x1[1]),
+                 (am(3)*p[1]-s*mcr**2*Imm[2]/(8*3**2))/(p[1]+x1[2]),
+                (am(4)*p[2]-s*mcr**2*Imm[3]/(8*4**2))/(p[2]+x1[3])])
+print('Imm', Imm[0])
+x_new=np.array([y,p[0],p[1], p[2]])
+print ('x_new', x_new)
+print ('alpha', alpha[0])
+#plt.plot(x_new,alpha)
+#f = interp1d(-x, alpha)
+#xnew = np.linspace(0, 29.12585937,100)
 
 #plt.plot(xnew, f(xnew))
 
-plt.xlabel('x', fontsize=10,  color='black')
-plt.ylabel('y(x)', fontsize=10,  color='black')
-plt.grid()
-plt.legend()
-plt.show()
+#plt.show()
+
